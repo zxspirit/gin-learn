@@ -12,7 +12,7 @@ func main() {
 
 	// Logging to a file.
 	f, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(f)
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	// Use the following code if you need to write the logs to file and console at the same time.
 	// gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
