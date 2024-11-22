@@ -11,11 +11,11 @@ func main() {
 	// By default gin.DefaultWriter = os.Stdout
 	r.Use(gin.Logger())
 
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
+	// Recovery 中间件从任何 panic 中恢复，如果有，则写入 500。
 	r.Use(gin.Recovery())
 
 	// Per route middleware, you can add as many as you desire.
-	r.GET("/benchmark", MyBenchLogger(), benchEndpoint)
+	r.GET("/benchmark", ab, benchEndpoint)
 
 	// Authorization group
 	// authorized := r.Group("/", AuthRequired())
@@ -24,6 +24,7 @@ func main() {
 	// per group middleware! in this case we use the custom created
 	// AuthRequired() middleware just in the "authorized" group.
 	authorized.Use(AuthRequired())
+
 	{
 		authorized.POST("/login", loginEndpoint)
 		authorized.POST("/submit", submitEndpoint)
@@ -36,4 +37,50 @@ func main() {
 
 	// Listen and serve on 0.0.0.0:8080
 	r.Run(":8080")
+}
+
+func analyticsEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "analytics",
+	})
+
+}
+
+func readEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "read",
+	})
+}
+
+func submitEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "submit",
+	})
+}
+
+func loginEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "login",
+	})
+}
+
+func AuthRequired() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		// example logic
+		// if token != "12345" {
+		// 	context.AbortWithStatus(401)
+		// 	return
+		// }
+	}
+}
+
+func ab(context *gin.Context) {
+	context.Set("example", "12345")
+}
+
+func benchEndpoint(context *gin.Context) {
+	context.JSON(200, gin.H{
+		"message": "bench",
+		"example": context.MustGet("example"),
+	})
 }
